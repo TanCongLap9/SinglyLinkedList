@@ -16,15 +16,15 @@ public:
 };
 template <class T> class LinkedList {
   Node<T>* head = nullptr;
-  // Node* tail = nullptr;
-  void initialize(T& value) { // Tạo danh sách bằng cách gán node vào head
+  // Node<T>* tail = nullptr;
+  void initialize(const T& value) { // Tạo danh sách bằng cách gán node vào head
     head /* = tail */ = new Node<T> {value, nullptr};
   }
   void resetHead() { // Làm trống danh sách khi chỉ còn 1 node
     delete head; head /* = tail */ = nullptr;
   }
   void throwIfEmpty() const {
-    if (!size()) throw runtime_error("Linked list is empty");
+    if (head == nullptr) throw runtime_error("Linked list is empty");
   }
 public:
   LLIterator<T> begin() const {return LLIterator<T>(head);}
@@ -39,7 +39,7 @@ public:
     throw out_of_range("Index out of bounds: " + to_string(index));
   }
   T& getLast() const {throwIfEmpty(); // Giá trị của node cuối
-    return find_if(begin(), end(), [] (LLIterator<T> iter) -> bool {return iter.get()->next == NULL;}).get()->data;
+    return find_if(begin(), end(), [] (LLIterator<T> iter) -> bool {return iter.get()->next == nullptr;}).get()->data;
     // Nếu có tail, câu trên có thể viết rút gọn vậy nè:
     /* return tail->data; */
   }
@@ -48,34 +48,35 @@ public:
     return distance(begin(), end());
   }
   void traverse() const { // Duyệt DSLK
-    if (head == NULL) cout << "(empty)";
+    if (head == nullptr) cout << "(empty)";
     for (LLIterator<T> iter: *this) cout << iter.get()->data << " ";
     cout << "\n";
   }
-  int search(T& value) const { // Tìm giá trị trong DSLK
-    LLIterator<T> result = find_if(begin(), end(), [value] (LLIterator<T> iter) -> bool {return iter.get()->data == value;});
+  int search(const T& value) const { // Tìm giá trị trong DSLK
+    LLIterator<T> result = find_if(begin(), end(), [&value] (LLIterator<T> iter) -> bool {return iter.get()->data == value;});
     return result != end() ? result.getIndex() : -1;
   }
   // Các hàm thêm node
-  void addFirst(T& value) { // Thêm node vào đầu DSLK
-    if (head == NULL) {initialize(value); return;}
+  void addFirst(const T& value) { // Thêm node vào đầu DSLK
+    if (head == nullptr) {initialize(value); return;}
     head = new Node<T> {value, head};
   }
-  void addAt(size_t index, T& value) { // Thêm node vào trước index
-                                      // Để thêm node vào sau thì tăng index lên 1
+  void addAt(size_t index, const T& value) {
+    /* Thêm node vào trước index
+       Để thêm node vào sau thì tăng index lên 1 */
     if (index == 0) {addFirst(value); return;}
     if (index == size()) {addLast(value); return;}
-    LLIterator<T> result = find_if(begin(), end(), [index] (LLIterator<T> iter) -> bool {return iter.get()->next != NULL && iter.getIndex() == index - 1;});
+    LLIterator<T> result = find_if(begin(), end(), [index] (LLIterator<T> iter) -> bool {return iter.get()->next != nullptr && iter.getIndex() == index - 1;});
     if (result != end()) {result.get()->next = new Node<T> {value, result.get()->next}; return;}
     throw out_of_range("Index out of bounds: " + to_string(index));
   }
-  void addLast(T& value) { // Thêm node vào cuối DSLK
-    if (head == NULL) {initialize(value); return;}
-    find_if(begin(), end(), [] (LLIterator<T> iter) -> bool {return iter.get()->next == NULL;}).get()->next = new Node<T> {value, NULL};
+  void addLast(const T& value) { // Thêm node vào cuối DSLK
+    if (head == nullptr) {initialize(value); return;}
+    find_if(begin(), end(), [] (LLIterator<T> iter) -> bool {return iter.get()->next == nullptr;}).get()->next = new Node<T> {value, nullptr};
   }
   // Các hàm xoá node
   void removeFirst() {throwIfEmpty(); // Xoá node ở đầu DSLK
-    if (head->next == NULL) {resetHead(); return;}
+    if (head->next == nullptr) {resetHead(); return;}
     Node<T>* after = head->next;
     delete head;
     head = after;
@@ -83,7 +84,7 @@ public:
   void removeAt(int index) {throwIfEmpty(); // Xoá node ở vị trí n của DSLK
     if (index == 0) {removeFirst(); return;}
     if (index == size() - 1) {removeLast(); return;}
-    LLIterator<T> result = find_if(begin(), end(), [index] (LLIterator<T> iter) -> bool {return iter.get()->next != NULL && iter.get()->next->next != NULL && iter.getIndex() == index - 1;});
+    LLIterator<T> result = find_if(begin(), end(), [index] (LLIterator<T> iter) -> bool {return iter.get()->next != nullptr && iter.get()->next->next != nullptr && iter.getIndex() == index - 1;});
     if (result != end()) {
       Node<T>* after = result.get()->next->next;
       delete result.get()->next;
@@ -93,10 +94,10 @@ public:
     throw out_of_range("Index out of bounds: " + to_string(index));
   }
   void removeLast() {throwIfEmpty(); // Xoá node ở cuối DSLK
-    if (head->next == NULL) {resetHead(); return;}
-    LLIterator<T> result = find_if(begin(), end(), [] (LLIterator<T> iter) -> bool {return iter.get()->next->next == NULL;});
+    if (head->next == nullptr) {resetHead(); return;}
+    LLIterator<T> result = find_if(begin(), end(), [] (LLIterator<T> iter) -> bool {return iter.get()->next->next == nullptr;});
     delete result.get()->next;
-    result.get()->next = NULL;
+    result.get()->next = nullptr;
   }
 };
 LinkedList<int> dslk; int giaTri, viTri; string hanhDong;
