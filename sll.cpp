@@ -15,8 +15,7 @@ public:
   bool operator!=(LLIterator<T> rhs) const {return node != rhs.node;}
 };
 template <class T> class LinkedList {
-  Node<T>* head = nullptr;
-  // Node<T>* tail = nullptr;
+  Node<T>* head = nullptr /*, * tail = nullptr */;
   void initialize(const T& value) { // Tạo danh sách bằng cách gán node vào head
     head /* = tail */ = new Node<T> {value, nullptr};
   }
@@ -41,7 +40,7 @@ public:
   T& getLast() const {throwIfEmpty(); // Giá trị của node cuối
     return find_if(begin(), end(), [] (LLIterator<T> iter) -> bool {return iter.get()->next == nullptr;}).get()->data;
     // Nếu có tail, câu trên có thể viết rút gọn vậy nè:
-    /* return tail->data; */
+    // return tail->data;
   }
   // Các hàm đi qua các node
   size_t size() const { // Kích thước DSLK (số lượng các node trong danh sách)
@@ -73,6 +72,8 @@ public:
   void addLast(const T& value) { // Thêm node vào cuối DSLK
     if (head == nullptr) {initialize(value); return;}
     find_if(begin(), end(), [] (LLIterator<T> iter) -> bool {return iter.get()->next == nullptr;}).get()->next = new Node<T> {value, nullptr};
+    // Nếu có tail, các câu trên được viết rút gọn vậy nè:
+    // tail = tail->next = new Node<T> {value};
   }
   // Các hàm xoá node
   void removeFirst() {throwIfEmpty(); // Xoá node ở đầu DSLK
@@ -98,6 +99,7 @@ public:
     LLIterator<T> result = find_if(begin(), end(), [] (LLIterator<T> iter) -> bool {return iter.get()->next->next == nullptr;});
     delete result.get()->next;
     result.get()->next = nullptr;
+    // tail = result.get();
   }
 };
 LinkedList<int> dslk; int giaTri, viTri; string hanhDong;
